@@ -19,13 +19,13 @@ try:
     search_box = driver.find_element(By.NAME, "q")
     
     # Type in the search term
-    search_box.send_keys("Selenium WebDriver")
+    search_box.send_keys("https://github.com/AbrarRagib")
     
     # Press Enter
     search_box.send_keys(Keys.RETURN)
     
     # Wait for the results to load
-    time.sleep(3)
+    time.sleep(5)
     
     # Print the title of the results page
     print(driver.title)
