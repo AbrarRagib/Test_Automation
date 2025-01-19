@@ -1,0 +1,65 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+
+# Initialize the WebDriver
+driver = webdriver.Chrome()
+
+try:
+    # Step 1: Login to the system
+    driver.get("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login")
+
+    # Enter username and password
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.NAME, "username"))
+    ).send_keys("Admin")
+    driver.find_element(By.NAME, "password").send_keys("admin123")
+    driver.find_element(By.XPATH, "//button[@type='submit']").click()
+
+    # Step 2: Navigate to the Leave menu and Apply Leave
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.LINK_TEXT, "Leave"))).click()
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.LINK_TEXT, "Apply"))).click()
+
+    # Step 3: Fill in the Apply Leave form
+    # Select Leave Type
+    leave_type_dropdown = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, "//div[contains(@class, 'oxd-select-text-input')]"))
+    )
+    leave_type_dropdown.click()
+    leave_type_option = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, "//span[text()='Annual Leave']"))
+    )
+    leave_type_option.click()
+
+    # Enter From Date
+    from_date = driver.find_element(By.XPATH, "//input[@placeholder='yyyy-dd-mm']")
+    from_date.clear()
+    from_date.send_keys("2025-01-22")
+
+    # Enter To Date
+    to_date = driver.find_elements(By.XPATH, "//input[@placeholder='yyyy-dd-mm']")[1]
+    to_date.clear()
+    to_date.send_keys("2025-01-23")
+
+    # Enter Comments
+    comment_box = driver.find_element(By.XPATH, "//textarea[@class='oxd-textarea--active']")
+    comment_box.send_keys("Taking leave for vacation.")
+
+    # Click Apply Button
+    apply_button = driver.find_element(By.XPATH, "//button[contains(@class, 'oxd-button--secondary')]")
+    apply_button.click()
+
+    # Step 4: Verify Success
+    success_message = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, "//div[contains(@class, 'oxd-toast-content')]"))
+    )
+    print("Leave applied successfully:", success_message.text)
+
+except Exception as e:
+    print("An error occurred:", str(e))
+
+finally:
+    # Close the browser
+    driver.quit()
